@@ -1,25 +1,32 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
+// import logo from './logo.svg';
 import './App.css';
+import Feature from './feature/Feature';
+import axios from 'axios';
 
 class App extends Component {
+  state = {
+    name: "",
+    scenarios: {}
+  }
+
+  componentDidMount() {
+    axios.get(`http://gherkin-to-json:9002/?url=https://raw.githubusercontent.com/tomatool/tomato/master/examples/features/compare.feature`)
+      .then(res => {
+        this.setState({
+                  name: res.data.name,
+                  background: res.data.background,
+                  scenarios: res.data.scenarioDefinitions
+                });
+      })
+  }
+
   render() {
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
+      <div>
+        { (this.state.name !== "") &&
+          <Feature name={this.state.name} background={this.state.background} scenarios={this.state.scenarios}/>
+        }
       </div>
     );
   }
